@@ -1,0 +1,80 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2 style="margin: 20px">Place your bids for the product:</h2>
+    <div class="row" style="margin: 10px">
+        <div class="card col-xs-1 col-lg-4" style="margin: 0px;">
+            <img src="{{item.imageURL}}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">{{item.title}}</h5>
+              <p class="card-text">Description: {{item.description}}</p>
+              <p class="card-text">Price: ${{item.cprice}}</p>
+              <p class="card-text">Posted by: {{item.owner.username}}</p>
+              <p class="card-text">Category: {{item.category}}</p>
+              <form action="{{item.id}}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" value={{item.id}}>
+                {% if visible %}
+                <button type="submit" class="btn btn-primary" value="add" name="watchlist">Add to watchlist</button>
+                {% endif %}
+                {% if not visible%}
+                <button type="submit" class="btn btn-primary" value="remove" name="watchlist">Remove from watchlist</button>
+                {% endif %}
+                {% if close_visible and item.active %}
+                <button type="submit" class="btn btn-primary" value="close" name="watchlist">Close the auction</button>
+                {% endif %}
+              </form>
+            </div>
+    </div>
+    <div class="card col-xs-1 col-lg-3" style="margin: 0px;">
+      <div class="card-body">
+        <h5 class="card-title">Starting price: ${{item.sprice}}</h5>
+        <h5 class="card-title">Current price: ${{item.cprice}}</h5>
+        <p class="card-text">Posted by: {{item.owner.username}}</p>
+        {% if not item.active %}
+        <p class="card-text">This auction has been closed. The winner of this auction is: {{bidder}} </p>
+        {% endif %}
+        {% if item.active %}
+        {% if disabled_bid %}
+        <p class="card-text">The last bid was done by you.</p>
+        {% else %}
+        <p class="card-text">Enter your bid amount</p>
+        {% endif %}
+        <form action="{{item.id}}" method="POST">
+          {% csrf_token %}
+          {{form}}
+          <input type="hidden" value="no" name="watchlist">
+          <button type="submit" class="btn btn-primary" value="submit" name="bid">Place bid</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card col-xs-1 col-lg-4" style="margin: 0px;">
+      <div class="card-body">
+        <h5 class="card-title">Comments:</h5>
+        <form action="{{item.id}}" method="POST">
+          {% csrf_token %}
+          <div class="form-group">
+            <input type="hidden" value="comment_post" name="watchlist">
+            <input class="form-control" name="comment" placeholder="Enter a comment" type="text">
+        </div>
+          <button type="submit" class="btn btn-primary" value="submit" name="bid">Submit</button>
+        </form>
+        {% for com in commentobj %}
+        <form>
+          <div class="form-row align-items-center" style="margin-top: 10px;">
+            <div class="col-auto">
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                <div class="input-group-text">{{com.commenter}}</div>
+                </div>
+                <input type="text" style="background-color: white;" readonly class="form-control" id="inlineFormInputGroup" placeholder="{{com.comment}}">
+              </div>
+            </div>
+          </div>
+        </form>
+        {% endfor %}
+      </div>
+    </div>
+    </div>
+{% endblock %}

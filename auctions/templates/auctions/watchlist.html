@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2 style="margin: 20px">Your watchlist:</h2>
+    <div class="row" style="margin: 10px">
+        {% for listing in listings %}
+        <div class="card col-xs-1 col-lg-3" style="margin: 10px;">
+            <img src="{{listing.imageURL}}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">{{listing.title}}</h5>
+              <p class="card-text">Description: {{listing.description}}</p>
+              <p class="card-text">Price: ${{listing.cprice}}</p>
+              <p class="card-text">Posted by: {{listing.owner.username}}</p>
+              <a href="{% url 'detail' listing.list_id %}" class="btn btn-primary">More details</a>
+            </div>
+    </div>
+    {% endfor %}
+    </div>
+{% endblock %}
